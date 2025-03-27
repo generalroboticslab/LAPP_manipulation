@@ -1,6 +1,6 @@
 params:
   algo:
-    name: a2c_continuous
+    name: LAPP_a2c_continuous
   config:
     bounds_loss_coef: 0.001
     clip_value: true

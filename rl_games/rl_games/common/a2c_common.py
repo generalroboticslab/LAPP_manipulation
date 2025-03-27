@@ -1360,3 +1360,56 @@ class ContinuousA2CBase(A2CBase):
                 should_exit = should_exit_t.float().item()
             if should_exit:
                 return self.last_mean_rewards, epoch_num
+
+    def render(self, env_idx=0, steps=150, fps=30):
+        import imageio
+        from isaacgym import gymapi
+        from tqdm import tqdm
+
+        cur_task = self.config['task_name']
+        if cur_task == 'hand_over':
+            ckpt_path = self.train_dir + '/../ShadowHandOverGPT.pth'
+        elif cur_task == 'swing_cup':
+            ckpt_path = self.train_dir + '/../ShadowHandSwingCupGPT.pth'
+        elif cur_task == 'kettle':
+            ckpt_path = self.train_dir + '/../ShadowHandKettleGPT.pth'
+
+        if ckpt_path is not None and os.path.exists(ckpt_path):
+            print(f"[render] loading from {ckpt_path}")
+            weights = torch.load(ckpt_path, map_location=self.device)
+            self.set_full_state_weights(weights)
+        else:
+            print("loading fail")
+            return
+        
+        self.set_eval()
+        frames = []
+        out_file = self.train_dir + f'/{cur_task}_render.mp4'
+        self.obs = self.env_reset()
+        camera_handle, camera_props = self.env._create_recording_camera(env_idx=env_idx,
+                                                                    width=1280,
+                                                                    height=720)
+        # print("$$$ Handle created")
+
+        for i in tqdm(range(steps), leave=False):
+            res_dict = self.get_action_values(self.obs)
+            self.obs, rewards, self.dones, infos = self.env_step(res_dict['actions'])
+
+            self.env.gym.render_all_camera_sensors(self.env.sim)
+            image_buffer = self.env.gym.get_camera_image(self.env.sim, self.env.envs[env_idx],
+                                                    camera_handle, gymapi.IMAGE_COLOR)
+
+            image_data = np.frombuffer(image_buffer, dtype=np.uint8).reshape(
+                (camera_props.height, camera_props.width, 4)
+            )
+            frame_bgr = image_data[..., :3]  # shape: (H, W, 3)
+
+            # import cv2
+            # frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+            # frames.append(frame_rgb)
+            
+            frames.append(frame_bgr)
+
+        if len(frames) > 0:
+            imageio.mimwrite(out_file, frames, fps=fps)
+            print(f"[test_and_save_render_video] video saved to {out_file}.")

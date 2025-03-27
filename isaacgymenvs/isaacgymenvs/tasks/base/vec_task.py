@@ -76,6 +76,7 @@ class Env(ABC):
         split_device = sim_device.split(":")
         self.device_type = split_device[0]
         self.device_id = int(split_device[1]) if len(split_device) > 1 else 0
+        self.record = config["env"].get("record", False)
 
         self.device = "cpu"
         if config["sim"]["use_gpu_pipeline"]:
@@ -93,7 +94,7 @@ class Env(ABC):
 
         enable_camera_sensors = config.get("enableCameraSensors", False)
         self.graphics_device_id = graphics_device_id
-        if enable_camera_sensors == False and self.headless == True:
+        if enable_camera_sensors == False and self.record == False:
             self.graphics_device_id = -1
 
         self.num_environments = config["env"]["numEnvs"]
@@ -454,6 +455,8 @@ class VecTask(Env):
             if self.virtual_display and mode == "rgb_array":
                 img = self.virtual_display.grab()
                 return np.array(img)
+        elif self.record:
+            self.gym.step_graphics(self.sim)
 
     def __parse_sim_params(self, physics_engine: str, config_sim: Dict[str, Any]) -> gymapi.SimParams:
         """Parse the config dictionary for physics stepping settings.

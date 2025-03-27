@@ -2,3 +2,8 @@ outputs/
 **/__pycache__/
 *.egg-info/
 wandb
+wandb
+isaacgym/
+LAPP_results/
+*.out
+IsaacGym_Preview_4_Package.tar.gz

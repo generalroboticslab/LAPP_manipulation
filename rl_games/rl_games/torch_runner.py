@@ -11,6 +11,7 @@ from rl_games.common import object_factory
 from rl_games.common import tr_helpers
 
 from rl_games.algos_torch import a2c_continuous
+from rl_games.algos_torch import LAPP_a2c_continuous
 from rl_games.algos_torch import a2c_discrete
 from rl_games.algos_torch import players
 from rl_games.common.algo_observer import DefaultAlgoObserver
@@ -35,6 +36,9 @@ class Runner:
     def __init__(self, algo_observer=None):
         self.algo_factory = object_factory.ObjectFactory()
         self.algo_factory.register_builder('a2c_continuous', lambda **kwargs : a2c_continuous.A2CAgent(**kwargs))
+
+        self.algo_factory.register_builder('LAPP_a2c_continuous', lambda **kwargs : LAPP_a2c_continuous.LAPPA2CAgent(**kwargs))
+
         self.algo_factory.register_builder('a2c_discrete', lambda **kwargs : a2c_discrete.DiscreteA2CAgent(**kwargs)) 
         self.algo_factory.register_builder('sac', lambda **kwargs: sac_agent.SACAgent(**kwargs))
         #self.algo_factory.register_builder('dqn', lambda **kwargs : dqnagent.DQNAgent(**kwargs))
@@ -107,6 +111,13 @@ class Runner:
         _override_sigma(player, args)
         player.run()
 
+    def run_render(self, args):
+        # print('Start to render')
+        self.agent = self.algo_factory.create(self.algo_name, base_name='run', params=self.params)
+        _restore(self.agent, args)
+        _override_sigma(self.agent, args)
+        self.agent.render()
+
     def create_player(self):
         return self.player_factory.create(self.algo_name, params=self.params)
     
@@ -124,7 +135,8 @@ class Runner:
             self.run_train(args)
 
         elif args['play']:
-            self.run_play(args)
+            # self.run_play(args)
+            self.run_render(args)
         else:
             self.run_train(args)
         # data = load_tensorboard_logs(self.agent.writer.logdir)

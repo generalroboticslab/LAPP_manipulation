@@ -22,10 +22,10 @@ INSTALL_REQUIRES = [
 
 # Installation operation
 setup(
-    name="eureka",
-    author="Jason Ma",
+    name="LAPP_manipulation",
+    author="Xiao Wei",
     version="1.0",
-    description="Eureka",
+    description="LAPP applied to manipulation task, based on Eureka",
     keywords=["llm", "rl"],
     include_package_data=True,
     python_requires=">=3.7",
