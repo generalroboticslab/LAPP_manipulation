@@ -1,3 +1,15 @@
+# LAPP: Large Language Model Feedback for Preference-Driven Reinforcement Learning
+
+[Pingcheng Jian](https://pingcheng-jian.github.io/),
+[Xiao Wei](https://www.linkedin.com/in/xiao-wei-36a10b325/),
+[Yanbaihui Liu](https://www.linkedin.com/in/yanbaihui-liu-19077216b/),
+[Samuel A. Moore](https://samavmoore.github.io/),
+[Michael M. Zavlanos](https://mems.duke.edu/faculty/michael-zavlanos),
+[Boyuan Chen](http://boyuanchen.com/)
+<br>
+Duke University
+<br>
+
 ## Environment Setup
 
 > [OS Version]
