@@ -11,6 +11,118 @@ Duke University
 <br>
 ![ps_teaser](figures/lapp_teaser.png)
 
+## Brief Project Structure
+The following is the brief structure of `LAPP_manipulation`. For your notice, many contents are inherited from `eureka`, and they are not changed in our practice. When I comment "Inherited", I try to indicate that likely these files won't be changed, unless for some very in-depth customization. Therefore, those contents will only be briefly described, but the files of great importance will have clear descriptions and be in bold font.
+
+```text
+.
+├── api_key
+│   └── personal_api_key.txt          # To be created
+├── eureka
+│   └── ...                           # Inherited
+├── isaacgym                          
+│   └── ...                           # Follow above instructions to create
+├── isaacgymenvs
+│   ├── assets                        # URDFs, mesh files, and rendering resources
+│   │   └── ...
+│   ├── docs                      
+│   │   └── ...                       # Inherited
+│   ├── isaacgymenvs
+│   │   ├── cfg
+│   │   │   ├── hydra
+│   │   │   │   └── ...               # Inherited
+│   │   │   ├── task                  # [Important] Robot env configuration for each task
+│   │   │   │   ├── ShadowHandKettle.yaml
+│   │   │   │   └── ...
+│   │   │   ├── train                 # [Important] Robot env configuration for each task
+│   │   │   │   ├── ShadowHandKettleGPTPPO.yaml
+│   │   │   │   └── ...
+│   │   │   └── config.yaml           # [Core] Meta-config for robot; task and train configs are its attributes
+│   │   ├── chekpoints                
+│   │   │   └── ...                   # Inherited
+│   │   ├── learning
+│   │   │   └── ...                   # Inherited
+│   │   ├── utils
+│   │   │   └── ...                   # Inherited
+│   │   ├── tasks
+│   │   │   ├── amp
+│   │   │   │   └── ...               # Inherited
+│   │   │   ├── base
+│   │   │   │   └── **vec_task.py**   # [Modified] Highest abstraction; rendering feature
+│   │   │   ├── dextreme             
+│   │   │   │   └── ...               # Inherited
+│   │   │   ├── factory
+│   │   │   │   └── ...               # Inherited
+│   │   │   ├── utils
+│   │   │   │   └── ...               # Inherited
+│   │   │   ├── **shadow_hand_kettlegpt.py**        # [Core] Environment code for shadow_hand_kettle task
+│   │   │   ├── *(Same for another two tasks)*
+│   │   │   └── ... *(Other files please refer to customization instructions)*
+│   │   ├── **LAPP_results**          # [Core]
+│   │   │   ├── ShadowHandKettleGPT
+│   │   │   │   └── YYYY-MM-DD_HH-MM-SS
+│   │   │   │       ├── nn
+│   │   │   │       │   ├── last_{task_name}_ep_{total_iter}.pth
+│   │   │   │       │   └── {task_name}.pth         # Checkpoint for highest success rate
+│   │   │   │       ├── predictor                   # Preference predictor
+│   │   │   │       │   └── pred_models_{ep}.pt
+│   │   │   │       ├── summaries
+│   │   │   │       ├── traj_pairs                  # Collected pairs of trajectories
+│   │   │   │       ├── config.yaml
+│   │   │   │       └── env.py                      # The environment code for this experiment
+│   │   │   └── *(Same for another two tasks)*
+│   │   ├── **LAPP_main.py**          # [Core] Main entry; Configure and run.
+│   │   └── train.py                  # Inherited
+│   └── setup.py
+├── **LAPP_prompt_library**
+│   ├── shadow_hand_kettle
+│   │   └── kettle_init_sys.txt       # [Core] Prompt template for shadow_hand_kettle task
+│   └── *(Same for another two tasks)*
+├── rl_games
+│   ├── docs
+│   │   └── ...                       # Inherited
+│   ├── notebooks
+│   │   └── ...                       # Inherited
+│   ├── tests                        
+│   │   └── ...                       # Inherited
+│   ├── rl_games
+│   │   ├── configs
+│   │   │   │   └── ...               # Inherited
+│   │   ├── distributed
+│   │   │   │   └── ...               # Inherited
+│   │   ├── envs
+│   │   │   │   └── ...               # Inherited
+│   │   ├── interfaces
+│   │   │   │   └── ...               # Inherited
+│   │   ├── networks
+│   │   │   │   └── ...               # Inherited
+│   │   ├── common
+│   │   │   ├── extensions
+│   │   │   │   └── ...               # Inherited
+│   │   │   ├── layers
+│   │   │   │   └── ...               # Inherited
+│   │   │   ├── transforms
+│   │   │   │   └── ...               # Inherited
+│   │   │   ├── **LAPP_transformer**
+│   │   │   │   ├── **transformer.py**              # [Core] Transformer structure for preference predictor
+│   │   │   │   └── **transformer_trainer.py**      # [Core] Wrapper of transformer, to fit the data we provide
+│   │   │   ├── **LAPP_a2c_common.py**              # [Core] Main file of our code implementation
+│   │   │   ├── **experience.py**                   # [Modified] Experience buffer; include preference reward
+│   │   │   ├── **ShadowHandKettleGPT.pth**         # [Core] Reproduce our shadow_hand_kettle task
+│   │   │   ├── **ShadowHandOverGPT.pth**
+│   │   │   ├── **ShadowHandSwingCupGPT.pth**
+│   │   │   └── ...                   # Inherited
+│   │   ├── algos_torch
+│   │   │   ├── **LAPP_a2c_continuous.py**          # [Core] Inherit from parent class we implement
+│   │   │   └── ...
+│   │   └── **torch_runner.py**       # [Modified] Register our algorithm and enable rendering feature
+│   ├── runner.py                     # Inherited
+│   └── setup.py
+├── LAPP_demo.sh                      # Quick starting point of this project
+├── README.md                         # Current file
+└── setup.py
+```
+
 ## Environment Setup
 
 > [OS Version]
@@ -54,6 +166,9 @@ export LD_LIBRARY_PATH=$(python3.8 -c "import sysconfig; print(sysconfig.get_con
 ```
 
 ## Getting Started
+
+![ps_teaser](figures/training_speed.png)
+
 ### Running our experiments
 1. We have written a running script in main directory, `LAPP_demo.sh`. Before running the script, remember to
 - Put your api key in the file `api_key/personal_api_key.txt`
