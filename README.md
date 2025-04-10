@@ -9,6 +9,7 @@
 <br>
 Duke University
 <br>
+![ps_teaser](figures/lapp_teaser.png)
 
 ## Environment Setup
 
