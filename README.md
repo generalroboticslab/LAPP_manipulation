@@ -224,4 +224,6 @@ This project refers to the github repositories [Unitree RL GYM](https://github.c
 [Isaac Gym](https://github.com/isaac-sim/IsaacGymEnvs).
 
 ## License
-This repository is released under the Apache License 2.0. See [LICENSE](LICENSE) for additional details.
+This repository is released under the CC BY-NC-ND 4.0 License. Duke University has filed patent rights for the technology associated with this article. 
+For further license rights, including using the patent rights for commercial purposes, please contact Duke’s Office for Translation and Commercialization (otcquestions@duke.edu) and reference OTC File 8724.
+See [LICENSE](LICENSE-CC-BY-NC-ND-4.0.md) for additional details.
